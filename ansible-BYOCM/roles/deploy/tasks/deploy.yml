@@ -11,6 +11,10 @@
   when: vpc_id is not defined
   register: vpc
 
+- fail:
+    msg: "Unable to locate VPC ID for {{ project_name}} in {{ env}}. Define create_vpc=True to create a VPC or define vpc_id manually"
+  when: vpc.vpcs|length == 0
+
 - name: capture vpc_id
   set_fact:
     vpc_id: "{{ vpc.vpcs[0].id }}"
@@ -48,3 +52,4 @@
     content: "{{ ec2_key.key.private_key }}"
     dest: "~/.ssh/{{ project_name }}-{{ env | d('dev') }}-key"
     mode: 0600
+  when: ec2_key.changed
