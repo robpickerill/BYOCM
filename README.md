@@ -1,6 +1,8 @@
 
 # BYOCM=BringYourOwnConfigurationManagement
 
+[![Build Status](https://travis-ci.org/robpickerill/BYOCM.svg?branch=master)](https://travis-ci.org/robpickerill/BYOCM)
+
 ## Requirements
 
 Imagine you’re part of a team that is starting a blogging application that would eventually run on the cloud (let’s assume it's AWS). The team has decided to use Wordpress to get a simple blog running as a start. Your team of developers wants you to help them monitor their application and the computers their application are running on. Since cloud is the target infrastructure, you decide to collect metrics with Prometheus and cAdvisor and to visualise with Grafana. The entire infrastructure is intended to be a container based system. In order to achieve the above, you would need to:
