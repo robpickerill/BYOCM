@@ -1,0 +1,50 @@
+---
+
+  # check security group status
+
+- name: gather ec2 vpc facts if not previously created
+  ec2_vpc_net_facts:
+    region: "{{ aws_region }}"
+    filters:
+      "tag:Name": "{{ vpc_name }}"
+      "tag:Env": "{{ env }}"
+  when: vpc_id is not defined
+  register: vpc
+
+- name: capture vpc_id
+  set_fact:
+    vpc_id: "{{ vpc.vpcs[0].id }}"
+  when: vpc_id is not defined
+
+- name: "create {{ project_name}} security group"
+  ec2_group:
+    name: "{{ item.key }}"
+    description: "{{ project_name }} {{ env }} {{ item.key }} security group"
+    region: "{{ aws_region }}"
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      Name: "{{ item.key }}"
+      Project: "{{ project_name }}"
+      Creator: Ansible
+      Env: "{{ env }}"
+  with_dict: "{{ security_groups }}"
+
+- name: "apply {{ project_name }} security group rules"
+  ec2_group:
+    name: "{{ item.key }}"
+    description: "{{ project_name }} {{ env }} {{ item.key }} security group"
+    rules: "{{ item.value.rules }}"
+  with_dict: "{{ security_groups }}"
+
+- name: create ec2 key
+  ec2_key:
+    name: "{{ project_name }}-{{ env }}-key"
+    region: "{{ aws_region }}"
+  register: ec2_key
+  no_log: true
+
+- name: save ec2 key
+  copy:
+    content: "{{ ec2_key.key.private_key }}"
+    dest: "~/.ssh/{{ project_name }}-{{ env | d('dev') }}-key"
+    mode: 0600

@@ -1,0 +1,73 @@
+---
+
+  # First create the VPC for Development
+
+- name: "create {{ project_name }} VPC"
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr }}"
+    region: "{{ aws_region }}"
+    tenancy: "{{ vpc_tenancy | d('default') }}"
+    tags:
+      Name: "{{ vpc_name }}"
+      Project: "{{ project_name }}"
+      Creator: Ansible
+      Env: "{{ env }}"
+  register: vpc
+
+- name: capture vpc id
+  set_fact:
+    vpc_id: "{{ vpc.vpc.id }}"
+
+  # We now need a subnet within the VPC
+
+- name: "create {{ project_name }} subnet"
+  ec2_vpc_subnet:
+    vpc_id: "{{ vpc_id }}"
+    cidr: "{{ subnet_cidr }}"
+    az: "{{ aws_region }}a"
+    region: "{{ aws_region }}"
+    tags:
+      Name: "{{ subnet_name }}"
+      Project: "{{ project_name }}"
+      Creator: Annsible
+      Env: "{{ env }}"
+  register: subnet
+
+- name: capture subnet id
+  set_fact:
+    subnet_id: "{{ subnet.subnet.id }}"
+
+  # Bring up an internet gateway on the VPC
+
+- name: create an internet gateway
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    tags:
+      Name: "{{ igw_name }}"
+      Project: "{{ project_name }}"
+      Creator: Ansible
+      Env: "{{ env }}"
+  register: igw
+
+- name: capture igw id
+  set_fact:
+    igw_id: "{{ igw.gateway_id }}"
+
+  # Add a route table
+
+- name:  create routing tables
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    subnets:
+      - "{{ subnet_id }}"
+    routes:
+      - dest: "0.0.0.0/0"
+        gateway_id: "{{ igw_id }}"
+    tags:
+      Name: "{{ routingtable_name }}"
+      Project: "{{ project_name }}"
+      Creator: Ansible
+      Env: "{{ env }}"

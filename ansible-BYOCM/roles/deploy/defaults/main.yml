@@ -1,0 +1,33 @@
+---
+
+# AWS
+aws_region: eu-west-2
+
+# VPC
+vpc_name: "{{ project_name }}-VPC"
+vpc_cidr: 172.31.0.0/23
+vpc_tenancy: default
+
+# Subnet
+subnet_name: "{{ project_name }}-{{ env }}Subnet"
+subnet_cidr: 172.31.0.0/24
+
+# IGW
+igw_name: "{{ project_name }}-IGW"
+
+# Routingtable
+routingtable_name: "{{ project_name }}-RT"
+
+security_groups:
+  "{{ project_name }}-Frontend-Blog":
+    rules:
+      - { proto: tcp, from_port: 80, to_port: 80, cidr_ip: 0.0.0.0/0 }
+      - { proto: tcp, from_port: 443, to_port: 443, cidr_ip: 0.0.0.0/0 }
+  "{{ project_name }}-SSH":
+    rules:
+      - { proto: tcp, from_port: 22, to_port: 80, cidr_ip: 35.177.169.103/32 }
+    
+
+# placeholder
+project_name: BYOCM
+env: dev
