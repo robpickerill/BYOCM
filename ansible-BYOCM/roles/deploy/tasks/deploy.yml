@@ -77,7 +77,7 @@
     vpc_subnet_id: "{{ subnet_id }}"
     assign_public_ip: "{{ item.value.public_ip }}"
     exact_count: "{{ item.value.count }}"
-    count_tag: 
+    count_tag:
       Name: "{{ item.key }}"
       Env: "{{ env }}"
     instance_tags:
