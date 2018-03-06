@@ -11,7 +11,8 @@
   when: vpc_id is not defined
   register: vpc
 
-- fail:
+- name: capture failure
+  fail:
     msg: "Unable to locate VPC ID for {{ project_name}} in {{ env }}. Define create_vpc=True to create a VPC or define vpc_id manually"
   when: vpc.vpcs|length == 0
 
