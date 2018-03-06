@@ -1,0 +1,6 @@
+---
+
+- name: reboot
+  command: sleep 5 && shutdown -r now "Reboot issued by Ansible for Kernel updates"
+  async: 1
+  poll: 0
