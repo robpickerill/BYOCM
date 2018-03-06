@@ -5,7 +5,7 @@
   # - VPC
   # - Subnet
   # - Internet NAT GW
-  # - Routing Table 
+  # - Routing Table
 
 - name: create VPC
   include_tasks: vpc_create.yml
