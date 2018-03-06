@@ -9,7 +9,7 @@ vpc_cidr: 172.31.0.0/23
 vpc_tenancy: default
 
 # Subnet
-subnet_name: "{{ project_name }}-{{ env }}Subnet"
+subnet_name: "{{ project_name }}-{{ env }}-Subnet"
 subnet_cidr: 172.31.0.0/24
 
 # IGW
