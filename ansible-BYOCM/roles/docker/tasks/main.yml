@@ -1,0 +1,32 @@
+---
+
+- name: install docker
+  yum:
+    name: docker
+    state: present
+
+- name: enable docker
+  service:
+    name: docker
+    enabled: true
+    state: started
+
+- name: check current docker-compose version
+  command: docker-compose --version
+  register: docker_compose_current_version
+  changed_when: false
+  failed_when: false
+
+- name: if a newer version exists, delete current docker-compose
+  file:
+    path: "{{ docker_compose_path }}"
+    state: absent
+  when: >
+    docker_compose_current_version.stdout is defined
+    and docker_compose_version not in docker_compose_current_version.stdout
+
+- name: install docker-compose
+  get_url:
+    url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
+    dest: "{{ docker_compose_path }}"
+    mode: 0755
