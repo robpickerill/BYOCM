@@ -1,0 +1,40 @@
+---
+
+  # Lets not assume that a vpc_id has been provided and see what we can gather from the cloud. Assumption in business logic that VPCs are labelled with a standard of project-name and environment.
+
+- name: gather ec2 vpc facts if not previously created
+  ec2_vpc_net_facts:
+    region: "{{ aws_region }}"
+    filters:
+      "tag:Name": "{{ vpc_name }}"
+      "tag:Env": "{{ env }}"
+  when: vpc_id is not defined
+  register: vpc
+
+- fail:
+    msg: "Unable to locate VPC ID for {{ project_name}} in {{ env }}. Define create_vpc=True to create a VPC or define vpc_id manually"
+  when: vpc.vpcs|length == 0
+
+  # Assumption: using first useable VPC, presuming that logic states only one VPC per project, per env exists.
+
+- name: capture vpc_id
+  set_fact:
+    vpc_id: "{{ vpc.vpcs[0].id }}"
+  when: vpc_id is not defined
+
+- name: gather ec2 subnet if not previously created
+  ec2_vpc_subnet_facts:
+    region: "{{ aws_region }}"
+    filters:
+      vpc-id: "{{ vpc_id }}"
+      "tag:Name": "{{ subnet_name }}"
+      "tag:Env": "{{ env }}"
+  when: subnet_id is not defined
+  register: subnet
+
+  # Assumption: packing a list of subnets that we can use to distribute an app over multiple AZs, but as this is a single development machine lets use first useable subnet for project and env
+
+- name: capture subnet_id
+  set_fact:
+    subnet_id: "{{ subnet.subnets.0.id }}"
+  when: subnet_id is not defined
