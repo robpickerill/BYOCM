@@ -39,6 +39,8 @@
     dest: "~/.ssh/{{ project_name }}-{{ env }}-key"
     mode: 0600
   when: ec2_key.changed
+  tags:
+    - skip_ansible_lint
 
   # Requirement is defined in code here:
   # - OS: Amazon Linux 2 -> amzn-ami-hvm-????.??.?.x86_64-gp2
