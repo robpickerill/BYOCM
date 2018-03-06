@@ -7,3 +7,21 @@
     - deploy
   tags:
     - deploy
+
+- name: bootstrap
+  hosts: tag_Project_BYOCM
+  become: true
+  vars:
+    ansible_ssh_private_key_file: ~/.ssh/BYOCM-dev-key
+  roles:
+    - bootstrap
+  tags: 
+    - bootstrap
+
+- name: configure docker
+  hosts: tag_Project_BYOCM
+  become: true
+  roles:
+    - docker
+  tags:
+    - docker
