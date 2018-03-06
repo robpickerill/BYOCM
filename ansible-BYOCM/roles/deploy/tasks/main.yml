@@ -1,8 +1,26 @@
 ---
 
+  # Offer the option to create a VPC and related items. This is idempotent so if the VPC already exists we only capture facts. Expects that the var: create_vpc is set to True.
+  # Creates:
+  # - VPC
+  # - Subnet
+  # - Internet NAT GW
+  # - Routing Table 
+
 - name: create VPC
   include_tasks: vpc_create.yml
   when: create_vpc | default(False) | bool
+
+  # If a VPC is not created, and the administrator hasn't provided an existing set of facts about AWS in the group_vars or host_vars, lets go and gather required ids to provision.
+  #  - VPC ID, var: {{ vpc_id }}
+  #  - Subnet ID, var: {{ subnet_id }}
+
+- name: gather AWS facts for provisioning
+  include_tasks: gather_aws_facts.yml
+  when: vpc_id is not defined or
+        subnet_id is not defined
+
+  # And then provision EC2 instances required for the project
 
 - name: provision ec2 instance
   include_tasks: deploy.yml
