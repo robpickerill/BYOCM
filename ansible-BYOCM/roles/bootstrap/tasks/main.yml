@@ -1,0 +1,24 @@
+---
+
+- name: update software
+  yum:
+    name: "*"
+    state: latest
+
+- name: check for kernel updates
+  shell: LAST_KERNEL=$(rpm -q --last kernel | awk 'NR==1{sub(/kernel-/,""); print $1}'); CURRENT_KERNEL=$(uname -r); if [ $LAST_KERNEL != $CURRENT_KERNEL ]; then echo 'reboot'; else echo 'no'; fi
+  ignore_errors: true
+  register: kernel
+
+- name: reboot
+  command: sleep 5 && shutdown -r now "Reboot issued by Ansible for Kernel updates"
+  async: 1
+  poll: 0
+  when: kernel.stdout.find("reboot") != -1
+
+- name: wait for the instances to come back
+  wait_for:
+    host: "{{ ec2_public_dns_name }}"
+    port: 22
+    state: started
+    delay: 1
