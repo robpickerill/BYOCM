@@ -23,4 +23,4 @@
   # And then provision EC2 instances required for the project
 
 - name: provision ec2 instance
-  include_tasks: deploy.yml
+  include_tasks: create_instance.yml
