@@ -1,0 +1,64 @@
+version: '3.3'
+
+services:
+  db:
+    container_name: mysql
+    image: mysql:5.7
+    volumes:
+      - dbdata:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: xEdij277nzZXeyVm9y+TxQ== 
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks:
+      mysql:
+        ipv4_address:
+          172.31.254.10
+
+  wordpress:
+    container_name: wordpress
+    image: wordpress:latest
+    depends_on:
+      - db
+      - nginx
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    networks:
+      reverse-proxy:
+        ipv4_address:
+          172.31.255.1
+      mysql:
+        ipv4_address:
+          172.31.254.1
+
+  nginx:
+    container_name: nginx
+    image: nginx:mainline-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"    
+    networks:
+      reverse-proxy:
+        ipv4_address:
+          172.31.255.10
+
+volumes:
+    dbdata:
+
+networks:
+  reverse-proxy:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.255.0/24
+  mysql:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.254.0/24 
