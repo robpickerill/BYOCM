@@ -1,0 +1,21 @@
+---
+
+- name: clone certbot repo
+  git:
+    repo: "{{ certbot_repo }}"
+    dest: "{{ certbot_dir }}"
+    version: "{{ certbot_version }}"
+    update: "{{ certbot_keep_updated }}"
+    force: yes
+
+- name: capture certbot_script
+  set_fact:
+    certbot_script: "{{ certbot_dir }}/certbot-auto"
+
+- name: set exec perms on certbot_script
+  file:
+    path: "{{ certbot_script }}"
+    mode: 0755
+
+- name: generate new cert
+  shell: "{{ certbot_script }} certonly --standalone --noninteractive --agree-tos --email rob@example.com -d {{ ec2_public_dns_name }}"
