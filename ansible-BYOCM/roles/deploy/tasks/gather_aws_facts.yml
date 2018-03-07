@@ -23,19 +23,19 @@
     vpc_id: "{{ vpc.vpcs[0].id }}"
   when: vpc_id is not defined
 
-- name: gather ec2 subnet if not previously created
+- name: gather ec2 subnets if not previously created
   ec2_vpc_subnet_facts:
     region: "{{ aws_region }}"
     filters:
       vpc-id: "{{ vpc_id }}"
-      "tag:Name": "{{ subnet_name }}"
+      "tag:Name": "{{ item.key }}"
       "tag:Env": "{{ env }}"
   when: subnet_id is not defined
-  register: subnet
+  with_dict: "{{ subnets }}" 
+  register: vpc_subnet
 
   # Assumption: packing a list of subnets that we can use to distribute an app over multiple AZs, but as this is a single development machine lets use first useable subnet for project and env
 
 - name: capture subnet_id
   set_fact:
-    subnet_id: "{{ subnet.subnets.0.id }}"
-  when: subnet_id is not defined
+    subnet_id: "{{ vpc_subnet.results | map(attribute='subnets.id') | list }}"
