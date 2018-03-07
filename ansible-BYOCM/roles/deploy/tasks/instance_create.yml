@@ -78,10 +78,10 @@
     assign_public_ip: "{{ item.value.public_ip }}"
     exact_count: "{{ item.value.count }}"
     count_tag:
-      Name: "{{ item.key }}"
+      Name: "{{ project_name }}-{{ env }}-instance"
       Env: "{{ env }}"
     instance_tags:
-      Name: "{{ item.key }}"
+      Name: "{{ project_name }}-{{ env }}-instance"
       Project: "{{ project_name }}"
       Env: "{{ env }}"
       Creator: Ansible

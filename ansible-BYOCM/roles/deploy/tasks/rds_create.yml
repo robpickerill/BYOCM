@@ -1,20 +1,31 @@
 ---
 
-- name: deploy RDS instance
+- name: create subnet group for RDS
+  rds_subnet_group:
+    state: present
+    name: "{{ project_name }}-{{ env }}-subnetgroup"
+    description: "RDS Subnet Group for {{ project_name }}"
+    aws_region: "{{ aws_region }}"
+    subnets: "{{ subnet_id }}"
+
+- name: "deploy {{ project_name }} RDS instance"
   rds:
     command: create
     instance_name: "{{ project_name }}-{{ env }}-database"
     wait: yes
+    wait_timeout: 3600
     db_engine: "{{ item.value.engine }}"
     db_name: "{{ item.key }}"
     engine_version: "{{ item.value.version }}"
     size: "{{ item.value.size | d(10) }}"
-    instance_type: "{{ item.value.instance_type | s('db.m1.small') }}"
+    instance_type: "{{ item.value.instance_type | d('db.m1.small') }}"
     username: "{{ item.value.username }}"
     password: "{{ item.value.password }}"
+    region: "{{ aws_region }}"
+    subnet: "{{ project_name }}-{{ env }}-subnetgroup"
     tags:
       Name: "{{ project_name }}-{{ env }}-database"
       Env: "{{ env }}"
       Creator: Ansible
-      Project: "{{ project }}"
-  with_dict: "{{ rds_instance }}"
+      Project: "{{ project_name }}"
+  with_dict: "{{ rds_instances }}"
