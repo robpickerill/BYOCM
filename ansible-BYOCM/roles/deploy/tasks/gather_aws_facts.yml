@@ -36,6 +36,14 @@
 
   # Assumption: packing a list of subnets that we can use to distribute an app over multiple AZs, but as this is a single development machine lets use first useable subnet for project and env
 
+- name: dump subnet
+  debug:
+    var: vpc_subnet
+
 - name: capture subnet_id
   set_fact:
-    subnet_id: "{{ vpc_subnet.results | map(attribute='subnets.id') | list }}"
+    subnet_id: "{{ vpc_subnet.results | map(attribute='subnets.0.id') | list }}"
+
+- name: debug subnet id
+  debug:
+    var: subnet_id

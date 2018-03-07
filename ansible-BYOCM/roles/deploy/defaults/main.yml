@@ -29,6 +29,7 @@ instances:
     count: 1
     instance_type: t2.micro
     public_ip: True
+    subnet_id: "{{ subnet_id | first }}"
     security_groups:
       rules:
         - { proto: tcp, from_port: 80, to_port: 80, cidr_ip: 0.0.0.0/0 }
