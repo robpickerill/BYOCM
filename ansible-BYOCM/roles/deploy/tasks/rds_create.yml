@@ -1,0 +1,20 @@
+---
+
+- name: deploy RDS instance
+  rds:
+    command: create
+    instance_name: "{{ project_name }}-{{ env }}-database"
+    wait: yes
+    db_engine: "{{ item.value.engine }}"
+    db_name: "{{ item.key }}"
+    engine_version: "{{ item.value.version }}"
+    size: "{{ item.value.size | d(10) }}"
+    instance_type: "{{ item.value.instance_type | s('db.m1.small') }}"
+    username: "{{ item.value.username }}"
+    password: "{{ item.value.password }}"
+    tags:
+      Name: "{{ project_name }}-{{ env }}-database"
+      Env: "{{ env }}"
+      Creator: Ansible
+      Project: "{{ project }}"
+  with_dict: "{{ rds_instance }}"
