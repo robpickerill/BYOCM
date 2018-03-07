@@ -23,4 +23,9 @@
   # And then provision EC2 instances required for the project
 
 - name: provision ec2 instance
-  include_tasks: create_instance.yml
+  include_tasks: instance_create.yml
+
+  # And then finally an RDS instance
+
+- name: provision RDS instance
+  include_tasks: rds_create.yml
