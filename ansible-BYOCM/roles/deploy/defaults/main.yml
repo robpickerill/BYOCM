@@ -9,8 +9,13 @@ vpc_cidr: 172.31.0.0/23
 vpc_tenancy: default
 
 # Subnet
-subnet_name: "{{ project_name }}-{{ env }}-Subnet"
-subnet_cidr: 172.31.0.0/24
+subnets:
+  BYOCM-subnet-A:
+    AZ: "{{ aws_region}}a"
+    subnet_cidr: 172.31.0.0/24
+  BYOCM-subnet-B:
+    AZ: "{{ aws_region }}b"
+    subnet_cidr: 172.31.1.0/24
 
 # IGW
 igw_name: "{{ project_name }}-IGW"
@@ -33,20 +38,12 @@ instances:
 
 rds_instances:
   BYOCM:
-    count: 1
-    engine: aurora
-    version:
+    engine: mariadb
+    version: 10.2.11
     size: 10
-    instance_type: db.m1.small
+    instance_type: db.t2.micro
     username: root
-    password: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          34623336306363663763386166396636383036386566373137323333326631616339356566393862
-          3063643037313765366337343565666262313838353862360a353364353437653965643334333964
-          33326638366533306363336566366265353464303932363264336463313730306564636630396435
-          3634333063393439610a376638343135373638656461643963386132396361313731653861633232
-          61326266653339396239303263386361356433343162336438636361316431323766333831663638
-          3061346334313530366133306665633763303364656462616433
+    password: SqZpKKsxde
 
 # placeholder
 project_name: BYOCM

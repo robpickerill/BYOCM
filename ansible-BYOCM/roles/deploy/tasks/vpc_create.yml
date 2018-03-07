@@ -21,22 +21,23 @@
 
   # We now need a subnet within the VPC
 
-- name: "create {{ project_name }} subnet"
+- name: "create {{ project_name }} subnets"
   ec2_vpc_subnet:
     vpc_id: "{{ vpc_id }}"
-    cidr: "{{ subnet_cidr }}"
-    az: "{{ aws_region }}a"
+    cidr: "{{ item.value.subnet_cidr }}"
+    az: "{[ item.value.AZ }}"
     region: "{{ aws_region }}"
     tags:
-      Name: "{{ subnet_name }}"
+      Name: "{{ item.key }}"
       Project: "{{ project_name }}"
       Creator: Annsible
       Env: "{{ env }}"
-  register: subnet
+  register: vpc_subnet
+  with_dict: "{{ subnets }}"
 
 - name: capture subnet id
   set_fact:
-    subnet_id: "{{ subnet.subnet.id }}"
+    subnet_id: "{{ vpc_subnet.results | map(attribute='subnet.id') | list }}"
 
   # Bring up an internet gateway on the VPC
 
@@ -62,7 +63,7 @@
     vpc_id: "{{ vpc_id }}"
     region: "{{ aws_region }}"
     subnets:
-      - "{{ subnet_id }}"
+      - "{{ item }}"
     routes:
       - dest: "0.0.0.0/0"
         gateway_id: "{{ igw_id }}"
@@ -71,3 +72,4 @@
       Project: "{{ project_name }}"
       Creator: Ansible
       Env: "{{ env }}"
+  with_items: "{{ subnet_id }}"
