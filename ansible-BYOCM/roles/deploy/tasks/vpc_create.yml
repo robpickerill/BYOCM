@@ -25,7 +25,7 @@
   ec2_vpc_subnet:
     vpc_id: "{{ vpc_id }}"
     cidr: "{{ item.value.subnet_cidr }}"
-    az: "{[ item.value.AZ }}"
+    az: "{{ item.value.AZ }}"
     region: "{{ aws_region }}"
     tags:
       Name: "{{ item.key }}"
@@ -62,8 +62,7 @@
   ec2_vpc_route_table:
     vpc_id: "{{ vpc_id }}"
     region: "{{ aws_region }}"
-    subnets:
-      - "{{ item }}"
+    subnets: "{{ subnet_id }}"
     routes:
       - dest: "0.0.0.0/0"
         gateway_id: "{{ igw_id }}"
@@ -72,4 +71,3 @@
       Project: "{{ project_name }}"
       Creator: Ansible
       Env: "{{ env }}"
-  with_items: "{{ subnet_id }}"

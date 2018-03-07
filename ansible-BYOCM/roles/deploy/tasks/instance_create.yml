@@ -67,10 +67,6 @@
     ami_id: "{{ ami.results[0].results[0].ami_id }}"
   when: ami is defined
 
-- name: debug subnet
-  debug:
-    var: subnet_id
- 
 - name: deploy ec2 instances
   ec2:
     key_name: "{{ project_name }}-{{ env }}-key"
@@ -92,14 +88,6 @@
     aws_region: "{{ aws_region }}"
   with_dict: "{{ instances }}"
   register: ec2_instances
-
-- name: display public_dns
-  debug:
-    var: "{{ item.1.public_dns_name }}"
-  with_subelements:
-    - "{{ ec2_instances.results }}"
-    - tagged_instances
-
 
 - name: wait for ssh for the instances
   wait_for:
