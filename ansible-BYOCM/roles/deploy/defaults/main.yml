@@ -45,6 +45,7 @@ rds_instances:
     instance_type: db.t2.micro
     username: root
     password: SqZpKKsxde
+    subnet_id: "{{ subnet_id | first }}"
 
 # placeholder
 project_name: BYOCM
