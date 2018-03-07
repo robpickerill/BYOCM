@@ -1,0 +1,5 @@
+---
+
+project_name: BYOCM
+
+ansible_ssh_private_key_file: ~/.ssh/BYOCM-{{ env }}-key
