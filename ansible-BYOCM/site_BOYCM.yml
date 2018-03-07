@@ -18,13 +18,6 @@
   tags:
     - bootstrap
 
-- name: conifigure database
-  hosts: tag_Name_BYOCM_dev_database
-  roles:
-    - database
-  tags:
-    - database
-
 - name: deploy SSL
   hosts: tag_Name_BYOCM_dev_instance
   become: true
