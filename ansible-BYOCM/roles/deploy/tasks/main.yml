@@ -27,5 +27,5 @@
 
   # And then finally an RDS instance
 
-- name: provision RDS instance
-  include_tasks: rds_create.yml
+# - name: provision RDS instance
+# include_tasks: rds_create.yml
