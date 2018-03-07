@@ -3,3 +3,6 @@
 project_name: BYOCM
 
 ansible_ssh_private_key_file: ~/.ssh/BYOCM-{{ env }}-key
+
+database_user: vault_database_user
+database_password: vault_database_password

@@ -1,0 +1,15 @@
+---
+
+- name: create database
+  delegate_to: localhost
+  mysql_db:
+    name: "{{ database_name }}"
+    state: present
+
+- name: create database user
+  deletegate_to: localhost
+  mysql_user:
+    name: "{{ database_user }}"
+    password: "{{ database_password }}"
+    priv: "{{ database_name }}.*:ALL"
+
