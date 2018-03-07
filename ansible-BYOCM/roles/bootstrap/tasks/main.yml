@@ -1,5 +1,11 @@
 ---
 
+- name: install base software
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ base_software }}"
+
 - name: update software
   yum:
     name: "*"
